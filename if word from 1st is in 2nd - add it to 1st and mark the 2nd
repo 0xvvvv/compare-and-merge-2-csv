@@ -1,0 +1,40 @@
+import csv
+
+def compare_lists(list1, list2, output_file1, output_file2):
+    with open(list1, 'r') as file1, open(list2, 'r') as file2:
+        reader1 = csv.reader(file1)
+        reader2 = csv.reader(file2)
+
+        data1 = [row for row in reader1]
+        data2 = [row for row in reader2]
+
+    result_data1 = []
+    result_data2 = []
+
+    for word1 in data1:
+        if word1[0] in [row[0] for row in data2]:
+            matching_row = [row for row in data2 if row[0] == word1[0]][0]
+            result_data1.append(word1 + [matching_row[1]])  # Добавляем слово из второго ряда листа 2
+        else:
+            result_data1.append(word1 + [''])  # Если совпадения нет, добавляем пустую строку
+
+    for word2 in data2:
+        if word2[0] in [row[0] for row in data1]:
+            result_data2.append([word2[0], '1'])  # Добавляем ",1" к слову из листа 2
+        else:
+            result_data2.append(word2)
+
+    with open(output_file1, 'w', newline='') as outfile1, open(output_file2, 'w', newline='') as outfile2:
+        writer1 = csv.writer(outfile1)
+        writer2 = csv.writer(outfile2)
+
+        writer1.writerows(result_data1)
+        writer2.writerows(result_data2)
+
+#В первом листе у нас содержаться имейлы из первоначальной заявки, во втором листе содержаться имейлы из первоначальной заявки и соответствующие им имейлы которые были созданы. Задача скрипта - если имейл из первого списка есть во втором списке, то добавить в первый список созданный имейл
+list1 = 'first-attempt-emails.csv'
+list2 = 'created and 1st att -emails.csv'
+output_file1 = 'output_SBA-1.csv'
+output_file2 = 'output_Jira3.csv'
+
+compare_lists(list1, list2, output_file1, output_file2)
